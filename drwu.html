@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr.WU 肌膚解壓行動 | 亞洲肌膚壓力指數檢測</title>
+    <style>
+        :root {
+            --primary-color: #008B8B; /* Dr.WU 常見的醫美專業藍綠色 */
+            --bg-color: #F5F7FA;
+            --text-color: #333333;
+            --card-bg: #FFFFFF;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, '微軟正黑體', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .btn:hover {
+            background-color: #006666;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .option-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            text-align: left;
+            padding: 15px 20px;
+        }
+        .option-btn:hover {
+            background-color: #E0F2F1;
+        }
+        #quiz-section, #result-section {
+            display: none;
+        }
+        .progress-bar {
+            height: 6px;
+            background-color: #eee;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #222;
+        }
+        .result-title {
+            font-size: 22px;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .result-desc {
+            background-color: #F0F8FF;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .product-rec {
+            font-weight: bold;
+            color: #D32F2F;
+        }
+        .ig-share-btn {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            border: none;
+        }
+        .ig-share-btn:hover {
+            background: linear-gradient(45deg, #bc1888 0%, #cc2366 25%, #dc2743 50%, #e6683c 75%, #f09433 100%);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- 首頁 -->
+    <div id="start-section">
+        <h1>Dr.WU 肌膚解壓行動</h1>
+        <p>生活的高壓，不該由肌膚買單。<br>完成 8 題測驗，測出你的「亞洲肌膚壓力指數」，獲取專屬解壓處方與隱藏折扣！</p>
+        <button class="btn" onclick="startQuiz()">開始檢測</button>
+    </div>
+
+    <!-- 測驗頁面 -->
+    <div id="quiz-section">
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="question-text" id="question-text">載入中...</div>
+        <div id="options-container">
+            <!-- 選項按鈕會透過 JS 動態生成 -->
+        </div>
+    </div>
+
+    <!-- 結果頁面 -->
+    <div id="result-section">
+        <h1 style="color: #333;">你的肌膚壓力報告</h1>
+        <div class="result-title" id="result-persona">人物誌載入中</div>
+        <div class="result-desc">
+            <p id="result-text">報告分析中...</p>
+            <p>💡 <b>專屬解壓處方：</b><br><span class="product-rec" id="result-product">推薦產品載入中</span></p>
+        </div>
+        <button class="btn ig-share-btn" onclick="alert('Demo: 截圖此畫面或點擊分享至 IG 限時動態，並標記 @drwu_skincare 抽解壓急救包！')">分享至 IG 限時動態</button>
+        <button class="btn" style="background-color: #333;" onclick="alert('Demo: 導轉至 Dr.WU 官網結帳頁面，並自動帶入折扣碼 RESET200')">領取處方 (結帳現折 $200)</button>
+        <p style="font-size: 12px; color: #999; cursor: pointer; text-decoration: underline;" onclick="location.reload()">重新測驗</p>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            q: "1. 你平常的『走跳』範圍，最接近哪種環境？",
+            options: [
+                { text: "A. 工業區或大馬路旁（每天吸廢氣）", type: "dry" },
+                { text: "B. 辦公大樓（空調吹整天）", type: "dry" },
+                { text: "C. 郊區或綠地（空氣尚可）", type: "none" }
+            ]
+        },
+        {
+            q: "2. 說實話，你最近平均一天的睡眠時間落在？",
+            options: [
+                { text: "A. 不到5小時（大夜班/熬夜冠軍）", type: "sensitive" },
+                { text: "B. 5-7小時（社畜標準睡眠）", type: "sensitive" },
+                { text: "C. 8小時以上（睡飽睡滿）", type: "none" }
+            ]
+        },
+        {
+            q: "3. 面對陽光與紫外線，你的防禦等級是？",
+            options: [
+                { text: "A. 毫無防備（崇尚自然）", type: "aging" },
+                { text: "B. 偶爾擦防曬或撐傘（看心情）", type: "aging" },
+                { text: "C. 滴水不漏（防曬乳+陽傘+外套）", type: "none" }
+            ]
+        },
+        {
+            q: "4. 過去一週內，你吃外食、炸物或手搖飲的頻率？",
+            options: [
+                { text: "A. 幾乎天天（快樂水是我的命）", type: "aging" },
+                { text: "B. 3-4次（偶爾放縱）", type: "none" },
+                { text: "C. 極少（自己煮或原型食物）", type: "none" }
+            ]
+        },
+        {
+            q: "5. 最近的生活壓力指數（考試/死線/人際），1-10分你給幾分？",
+            options: [
+                { text: "A. 8-10分（快要爆炸了）", type: "sensitive" },
+                { text: "B. 4-7分（還算游刃有餘）", type: "none" },
+                { text: "C. 1-3分（歲月靜好）", type: "none" }
+            ]
+        },
+        {
+            q: "6. 你每天的『主動喝水』習慣是？",
+            options: [
+                { text: "A. 想到才喝，常喝不到1公升", type: "dry" },
+                { text: "B. 大約1.5公升", type: "none" },
+                { text: "C. 每天嚴格執行2公升以上", type: "none" }
+            ]
+        },
+        {
+            q: "7. 台灣悶熱潮濕的氣候，最常讓你的臉部出現什麼災情？",
+            options: [
+                { text: "A. 中東油田，粉刺痘痘開派對", type: "oil" },
+                { text: "B. 外油內乾，兩頰繃繃的", type: "oil" },
+                { text: "C. 沒什麼感覺", type: "none" }
+            ]
+        },
+        {
+            q: "8. 遇到季節交替（換季）時，你的肌膚通常會...？",
+            options: [
+                { text: "A. 泛紅、乾癢、小毛病不斷", type: "sensitive" },
+                { text: "B. 稍微粗糙但能自行恢復", type: "dry" },
+                { text: "C. 穩如泰山", type: "none" }
+            ]
+        }
+    ];
+
+    const results = {
+        dry: {
+            persona: "🥀 都市叢林裡的乾枯玫瑰",
+            text: "你的肌膚水分正在被環境無情榨乾！隱形壓力指數偏高，肌膚的保水堤防正在瓦解，渴望一場解渴的大雨。",
+            product: "【保濕首選】玻尿酸保濕精華液 / 保濕系列"
+        },
+        sensitive: {
+            persona: "🦉 深夜爆肝的夜行貓頭鷹",
+            text: "身體在睡，肌膚卻還在加班！高壓與作息不規律讓屏障發出求救訊號，容易泛紅敏感，急需深層修復。",
+            product: "【修復金三角】角鯊潤澤修復精華 / 神經醯胺系列"
+        },
+        aging: {
+            persona: "🍮 糖化危機的焦糖布丁",
+            text: "快樂水、紫外線和外食讓你的肌膚悄悄「焦糖化」了！氧化壓力正在累積，如果不想提早暗沉老化，請立即啟動防禦機制。",
+            product: "【煥白抗老】超A醇煥顏系列 / 維他命C亮白系列"
+        },
+        oil: {
+            persona: "🎢 氣候受災戶的雲霄飛車肌",
+            text: "台灣的極端氣候讓你的肌膚像坐雲霄飛車，油水大失衡！粉刺痘痘隨時準備開派對，你需要溫和的代謝來重建肌膚秩序。",
+            product: "【溫和煥膚】杏仁酸溫和煥膚精華系列"
+        }
+    };
+
+    let currentQuestion = 0;
+    let scores = { dry: 0, sensitive: 0, aging: 0, oil: 0 };
+
+    function startQuiz() {
+        document.getElementById('start-section').style.display = 'none';
+        document.getElementById('quiz-section').style.display = 'block';
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const qData = questions[currentQuestion];
+        document.getElementById('question-text').innerText = qData.q;
+        
+        // 更新進度條
+        const progressPercent = ((currentQuestion) / questions.length) * 100;
+        document.getElementById('progress').style.width = progressPercent + '%';
+
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = ''; // 清空選項
+
+        qData.options.forEach(option => {
+            const btn = document.createElement('button');
+            btn.className = 'btn option-btn';
+            btn.innerText = option.text;
+            btn.onclick = () => selectOption(option.type);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectOption(type) {
+        if(type !== "none" && scores[type] !== undefined) {
+            scores[type]++;
+        }
+
+        currentQuestion++;
+
+        if (currentQuestion < questions.length) {
+            showQuestion();
+        } else {
+            calculateResult();
+        }
+    }
+
+    function calculateResult() {
+        // 找出最高分的類別
+        let maxScore = -1;
+        let finalType = "dry"; // 預設
+
+        for (let type in scores) {
+            if (scores[type] > maxScore) {
+                maxScore = scores[type];
+                finalType = type;
+            }
+        }
+
+        const finalResult = results[finalType];
+
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('result-section').style.display = 'block';
+
+        document.getElementById('result-persona').innerText = finalResult.persona;
+        document.getElementById('result-text').innerText = finalResult.text;
+        document.getElementById('result-product').innerText = finalResult.product;
+    }
+</script>
+</body>
+</html>
