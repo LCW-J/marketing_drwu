@@ -6,7 +6,7 @@
     <title>Dr.WU 肌膚解壓行動 | 亞洲肌膚壓力指數檢測</title>
     <style>
         :root {
-            --primary-color: #008B8B; /* Dr.WU 常見的醫美專業藍綠色 */
+            --primary-color: #008B8B;
             --bg-color: #F5F7FA;
             --text-color: #333333;
             --card-bg: #FFFFFF;
@@ -113,6 +113,13 @@
             font-weight: bold;
             color: #D32F2F;
         }
+        .result-img {
+            width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
         .ig-share-btn {
             background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
             border: none;
@@ -123,7 +130,6 @@
     </style>
 </head>
 <body>
-
 <div class="container" id="app">
     <!-- 首頁 -->
     <div id="start-section">
@@ -131,21 +137,18 @@
         <p>生活的高壓，不該由肌膚買單。<br>完成 8 題測驗，測出你的「亞洲肌膚壓力指數」，獲取專屬解壓處方與隱藏折扣！</p>
         <button class="btn" onclick="startQuiz()">開始檢測</button>
     </div>
-
     <!-- 測驗頁面 -->
     <div id="quiz-section">
         <div class="progress-bar">
             <div class="progress" id="progress"></div>
         </div>
         <div class="question-text" id="question-text">載入中...</div>
-        <div id="options-container">
-            <!-- 選項按鈕會透過 JS 動態生成 -->
-        </div>
+        <div id="options-container"></div>
     </div>
-
     <!-- 結果頁面 -->
     <div id="result-section">
         <h1 style="color: #333;">你的肌膚壓力報告</h1>
+        <img id="result-img" class="result-img" src="" alt="結果圖片">
         <div class="result-title" id="result-persona">人物誌載入中</div>
         <div class="result-desc">
             <p id="result-text">報告分析中...</p>
@@ -229,22 +232,26 @@
         dry: {
             persona: "🥀 都市叢林裡的乾枯玫瑰",
             text: "你的肌膚水分正在被環境無情榨乾！隱形壓力指數偏高，肌膚的保水堤防正在瓦解，渴望一場解渴的大雨。",
-            product: "【保濕首選】玻尿酸保濕精華液 / 保濕系列"
+            product: "【保濕首選】玻尿酸保濕精華液 / 保濕系列",
+            img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShazBJiTEsy0hif8zdAYgkB7f9HwmvuAi5hg&s"
         },
         sensitive: {
             persona: "🦉 深夜爆肝的夜行貓頭鷹",
             text: "身體在睡，肌膚卻還在加班！高壓與作息不規律讓屏障發出求救訊號，容易泛紅敏感，急需深層修復。",
-            product: "【修復金三角】角鯊潤澤修復精華 / 神經醯胺系列"
+            product: "【修復金三角】角鯊潤澤修復精華 / 神經醯胺系列",
+            img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNeSjCj5eBIYXpSDHqX9gKRi16XUsBq1lWLg&s"
         },
         aging: {
             persona: "🍮 糖化危機的焦糖布丁",
             text: "快樂水、紫外線和外食讓你的肌膚悄悄「焦糖化」了！氧化壓力正在累積，如果不想提早暗沉老化，請立即啟動防禦機制。",
-            product: "【煥白抗老】超A醇煥顏系列 / 維他命C亮白系列"
+            product: "【煥白抗老】超A醇煥顏系列 / 維他命C亮白系列",
+            img: "https://imgproxy.icook.network/safe/rt:fit/w:1200/el:0/q:80/plain/http://tokyo-kitchen.icook.tw.s3.amazonaws.com/uploads/recipe/cover/458940/92c106b291381e0c.jpg"
         },
         oil: {
             persona: "🎢 氣候受災戶的雲霄飛車肌",
             text: "台灣的極端氣候讓你的肌膚像坐雲霄飛車，油水大失衡！粉刺痘痘隨時準備開派對，你需要溫和的代謝來重建肌膚秩序。",
-            product: "【溫和煥膚】杏仁酸溫和煥膚精華系列"
+            product: "【溫和煥膚】杏仁酸溫和煥膚精華系列",
+            img: "https://icrvb3jy.xinmedia.com/solomo/article/C/0/3/C03BA481-A1C8-44F2-A70D-A9D2F11321F5.jpg"
         }
     };
 
@@ -260,14 +267,10 @@
     function showQuestion() {
         const qData = questions[currentQuestion];
         document.getElementById('question-text').innerText = qData.q;
-        
-        // 更新進度條
-        const progressPercent = ((currentQuestion) / questions.length) * 100;
+        const progressPercent = (currentQuestion / questions.length) * 100;
         document.getElementById('progress').style.width = progressPercent + '%';
-
         const optionsContainer = document.getElementById('options-container');
-        optionsContainer.innerHTML = ''; // 清空選項
-
+        optionsContainer.innerHTML = '';
         qData.options.forEach(option => {
             const btn = document.createElement('button');
             btn.className = 'btn option-btn';
@@ -278,12 +281,10 @@
     }
 
     function selectOption(type) {
-        if(type !== "none" && scores[type] !== undefined) {
+        if (type !== "none" && scores[type] !== undefined) {
             scores[type]++;
         }
-
         currentQuestion++;
-
         if (currentQuestion < questions.length) {
             showQuestion();
         } else {
@@ -292,23 +293,19 @@
     }
 
     function calculateResult() {
-        // 找出最高分的類別
         let maxScore = -1;
-        let finalType = "dry"; // 預設
-
+        let finalType = "dry";
         for (let type in scores) {
             if (scores[type] > maxScore) {
                 maxScore = scores[type];
                 finalType = type;
             }
         }
-
         const finalResult = results[finalType];
-
         document.getElementById('quiz-section').style.display = 'none';
         document.getElementById('result-section').style.display = 'block';
-
         document.getElementById('result-persona').innerText = finalResult.persona;
+        document.getElementById('result-img').src = finalResult.img;
         document.getElementById('result-text').innerText = finalResult.text;
         document.getElementById('result-product').innerText = finalResult.product;
     }
