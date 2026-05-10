@@ -144,6 +144,7 @@
         </div>
         <div class="question-text" id="question-text">載入中...</div>
         <div id="options-container"></div>
+        <button class="btn" id="back-btn" onclick="goBack()" style="background-color: white; color: #888; border: 2px solid #ddd; margin-top: 10px; display: none;">← 回上一題</button>
     </div>
     <!-- 結果頁面 -->
     <div id="result-section">
@@ -291,6 +292,7 @@
 
     let currentQuestion = 0;
     let scores = { dry: 0, sensitive: 0, aging: 0, oil: 0, dull: 0, wrinkle: 0 };
+    let answerHistory = []; // 記錄每題選的 type
 
     function startQuiz() {
         document.getElementById('start-section').style.display = 'none';
@@ -312,9 +314,13 @@
             btn.onclick = () => selectOption(option.type);
             optionsContainer.appendChild(btn);
         });
+
+        const backBtn = document.getElementById('back-btn');
+        backBtn.style.display = currentQuestion >= 1 ? 'block' : 'none';
     }
 
     function selectOption(type) {
+        answerHistory.push(type); // 記錄這題的答案
         if (type !== "none" && scores[type] !== undefined) {
             scores[type]++;
         }
@@ -324,6 +330,16 @@
         } else {
             calculateResult();
         }
+    }
+
+    function goBack() {
+        if (currentQuestion <= 0) return;
+        currentQuestion--;
+        const prevType = answerHistory.pop(); // 取出上一題的答案
+        if (prevType !== "none" && scores[prevType] !== undefined) {
+            scores[prevType]--; // 扣回那題的分數
+        }
+        showQuestion();
     }
 
     function calculateResult() {
